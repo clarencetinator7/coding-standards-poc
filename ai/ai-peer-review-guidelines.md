@@ -221,240 +221,233 @@ Only comment on **meaningful improvements**.
 
 ---
 
-# Severity and Confidence
+## Output Structure
 
-Each issue should include:
+The AI must return the review in **structured JSON format** so automated
+tools can process the results and generate inline PR comments.
 
-### Severity
+The output must contain:
 
-- **High** -- Potential bug, security issue, or major violation
-- **Medium** -- Maintainability or architectural concern
-- **Low** -- Minor improvement or readability suggestion
+- A **summary section** for human‑readable feedback
+- A **structured list of issues** for automated inline review comments
 
-### Confidence
+The entire response **must be wrapped between the markers**:
 
-Indicate how confident you are in the finding.
+Starting Marker: `<<<AI_REVIEW_START>>>`
+Ending Marker: `<<<AI_REVIEW_END>>>`
 
-- **High** -- Clear guideline violation
-- **Medium** -- Likely improvement but contextual
-- **Low** -- Suggestion based on best practices
+No other content should exist outside these markers.
+
+---
+
+# Output Format
+
+The review must follow this JSON structure:
+
+```json
+{
+  "summary": {
+    "pull_request": "<PR_NUMBER>",
+    "files_reviewed": <FILES_COUNT>,
+    "issues_found": <ISSUE_COUNT>,
+    "overall_assessment": "<short summary of the code review>"
+  },
+  "issues": [
+    {
+      "title": "<short issue title>",
+      "file": "<file path>",
+      "line": <line_number>,
+      "guideline": {
+        "rule_id": "<RULE_ID>",
+        "rule_title": "<Rule title>"
+      },
+      "severity": "High | Medium | Low",
+      "confidence": "High | Medium | Low",
+      "code_snippet": "<relevant code snippet>",
+      "explanation": "<why this is an issue>",
+      "suggested_fix": "<improved code example>"
+    }
+  ]
+}
+```
 
 ---
 
-# Pull Request Comment Format
-
-All comments must follow this structure.
-
----
+# Field Descriptions
 
 ## Summary
 
-Include a summary of the review.
+Provides a **human‑readable overview** of the review.
 
 Example:
 
-```
-## Summary
-Pull Request: <PR_NUMBER>
-Files Reviewed: <FILES_COUNT>
-Issues Found: <ISSUE_COUNT>
-```
-
-## Guideline Violated
-
-When identifying an issue, always reference the specific rule ID and rule title from the standards documentation.
-
-Preferred format:
-
-```
-Guideline Violated: RTS-007 – Avoid Inline Functions in JSX
+```json
+"summary": {
+  "pull_request": "124",
+  "files_reviewed": 3,
+  "issues_found": 2,
+  "overall_assessment": "The PR generally follows coding standards but contains a few maintainability issues and one potential type safety problem."
+}
 ```
 
-Other examples:
+This section can be used to generate a **summary PR comment**.
 
-```
-Guideline Violated: TSC-002 – Avoid Using the `any` Type
-Guideline Violated: GCG-008 – Keep Functions Small and Focused
-```
+---
 
-**_ Avoid referencing guidelines generically. _**
+## Issues
+
+Contains individual findings discovered during the review.
+
+Each issue corresponds to **one potential inline code review comment**.
+
+---
+
+## Title
+
+Short description of the issue.
+
+Example:
+
+Avoid using `any` type
+
+---
+
+## File
+
+Relative file path in the repository.
+
+Example:
+
+src/components/UserList.tsx
+
+---
+
+## Line
+
+Line number in the **modified code** where the issue occurs.
+
+This value will be used to create **inline PR review comments**.
+
+---
+
+## Guideline
+
+Each issue must reference the specific rule being violated.
+
+Example:
+
+```json
+"guideline": {
+  "rule_id": "TSC-002",
+  "rule_title": "Avoid Using the `any` Type"
+}
+```
 
 ---
 
 ## Severity
 
-High \| Medium \| Low
+Allowed values:
+
+High\
+Medium\
+Low
 
 ---
 
 ## Confidence
 
-High \| Medium \| Low
+Allowed values:
+
+High\
+Medium\
+Low
 
 ---
 
 ## Code Snippet
 
-Include:
-
-- File name
-- Line numbers
-- Relevant code
-
-Example:
-
-File: UserList.tsx\
-Lines: 42--46
-
-```ts
-<button onClick={() => handleDelete(user.id)}>
-  Delete
-</button>
-```
-
----
-
-## Issue Explanation
-
-Explain **why the code is problematic**.
-
-Example:
-
-Inline functions inside JSX create a new function during every render.\
-This can lead to unnecessary re-renders and reduced performance.
-
----
-
-## Suggested Improvement
-
-Provide a better implementation when possible.
+Include the relevant portion of code that triggered the issue.
 
 Example:
 
 ```ts
-const handleDeleteClick = (id: string) => {
-  handleDelete(id);
-};
-
-<button onClick={() => handleDeleteClick(user.id)}>
-  Delete
-</button>
+const user: any = getUser();
 ```
 
 ---
 
-# Comment Tone
+## Explanation
 
-Comments must be:
-
-- Professional
-- Constructive
-- Clear
-- Helpful
-
-Prefer:
-
-> Consider extracting this logic into a helper function to improve
-> readability.
-
-Avoid:
-
-> This code is bad.
-
----
-
-# Review Scope
-
-Only review:
-
-- Files modified in the pull request
-- Code introduced or modified in the diff
-
-Do not review unrelated parts of the repository unless they directly
-affect the change.
-
-# Output Rules
-
-1. Your response MUST be wrapped between the following markers:
-
-- Start Marker : `<<<AI_REVIEW_START>>>`
-- End Marker : `<<<AI_REVIEW_END>>>`
+Explain **why the code violates the guideline**.
 
 Example:
 
-```
-<<<AI_REVIEW_START>>>
-[review content]
-<<<AI_REVIEW_END>>>
-```
+Using the `any` type removes type safety and defeats the purpose of
+TypeScript's static type checking.
 
-2. Do NOT output anything outside these markers.
-3. Do NOT include reasoning steps, logs, or analysis.
-4. Do NOT include tool outputs such as file reads or build attempts.
+---
 
-Inside the review section:
+## Suggested Fix
 
-- Each issue must follow the structure below
-- If multiple issues are found, separate them using this divider: `---`
-- If multiple issues are found, number them sequentially.
+Provide an improved implementation when possible.
 
 Example:
 
+```ts
+interface User {
+  id: string;
+  name: string;
+}
+
+const user: User = getUser();
 ```
-## Issue 1
-...
 
 ---
 
-## Issue 2
-...
+# Example AI Output
+
+    <<<AI_REVIEW_START>>>
+    {
+      "summary": {
+        "pull_request": "124",
+        "files_reviewed": 2,
+        "issues_found": 1,
+        "overall_assessment": "The code is mostly clean but contains one TypeScript type safety issue."
+      },
+      "issues": [
+        {
+          "title": "Avoid using `any` type",
+          "file": "src/services/userService.ts",
+          "line": 27,
+          "guideline": {
+            "rule_id": "TSC-002",
+            "rule_title": "Avoid Using the `any` Type"
+          },
+          "severity": "Medium",
+          "confidence": "High",
+          "code_snippet": "const user: any = fetchUser();",
+          "explanation": "Using `any` removes compile-time type safety and may hide runtime errors.",
+          "suggested_fix": "const user: User = fetchUser();"
+        }
+      ]
+    }
+    <<<AI_REVIEW_END>>>
 
 ---
-```
 
-- Do not add a divider after the final issue.
+# Special Case: No Issues Found
 
-# Example AI Review Comment
+If no issues are identified, the AI must return:
 
-## Summary
-
-Pull Request: <PR_NUMBER>
-Files Reviewed: <FILES_COUNT>
-Issues Found: <ISSUE_COUNT>
-
-**Guideline Violated**\
-Guideline Violated: RTS-007 – Avoid Inline Functions in JSX
-
-**Severity**\
-Low
-
-**Confidence**\
-High
-
-**Code Snippet**
-
-File: UserList.tsx\
-Lines: 42--46
-
-```ts
-<button onClick={() => handleDelete(user.id)}>
-  Delete
-</button>
-```
-
-**Issue Explanation**
-
-Inline functions inside JSX create a new function during each render.\
-This may cause unnecessary re-renders and performance issues.
-
-**Suggested Improvement**
-
-```ts
-const handleDeleteClick = (id: string) => {
-  handleDelete(id);
-};
-
-<button onClick={() => handleDeleteClick(user.id)}>
-  Delete
-</button>
-```
+    <<<AI_REVIEW_START>>>
+    {
+      "summary": {
+        "pull_request": "<PR_NUMBER>",
+        "files_reviewed": <FILES_COUNT>,
+        "issues_found": 0,
+        "overall_assessment": "No issues found based on the current coding standards."
+      },
+      "issues": []
+    }
+    <<<AI_REVIEW_END>>>
