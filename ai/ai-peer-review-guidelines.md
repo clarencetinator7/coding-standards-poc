@@ -379,6 +379,11 @@ Example:
 3. Do NOT include reasoning steps, logs, or analysis.
 4. Do NOT include tool outputs such as file reads or build attempts.
 
+Inside the review section:
+
+- Each issue must follow the structure below
+- If multiple issues are found, separate them using this divider: `---`
+
 ---
 
 # Example AI Review Comment
