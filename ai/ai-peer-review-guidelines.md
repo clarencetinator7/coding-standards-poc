@@ -364,15 +364,15 @@ affect the change.
 
 1. Your response MUST be wrapped between the following markers:
 
-- Start Marker : `---- REVIEW START ----`
-- End Marker : `---- REVIEW END ----`
+- Start Marker : `<<<AI_REVIEW_START>>>`
+- End Marker : `<<<AI_REVIEW_END>>>`
 
 Example:
 
 ```
----- REVIEW START ----
+<<<AI_REVIEW_START>>>
 [review content]
----- REVIEW END ----
+<<<AI_REVIEW_END>>>
 ```
 
 2. Do NOT output anything outside these markers.
