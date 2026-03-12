@@ -360,6 +360,20 @@ Only review:
 Do not review unrelated parts of the repository unless they directly
 affect the change.
 
+# Output Rules
+
+1. Your response MUST be wrapped between the following markers:
+
+```
+---- REVIEW START ----
+[review content]
+---- REVIEW END ----
+```
+
+2. Do NOT output anything outside these markers.
+3. Do NOT include reasoning steps, logs, or analysis.
+4. Do NOT include tool outputs such as file reads or build attempts.
+
 ---
 
 # Example AI Review Comment
