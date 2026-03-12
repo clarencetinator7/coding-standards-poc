@@ -247,6 +247,19 @@ All comments must follow this structure.
 
 ---
 
+## Summary
+
+Include a summary of the review.
+
+Example:
+
+```
+## Summary
+Pull Request: <PR_NUMBER>
+Files Reviewed: <FILES_COUNT>
+Issues Found: <ISSUE_COUNT>
+```
+
 ## Guideline Violated
 
 When identifying an issue, always reference the specific rule ID and rule title from the standards documentation.
@@ -402,6 +415,12 @@ Example:
 - Do not add a divider after the final issue.
 
 # Example AI Review Comment
+
+## Summary
+
+Pull Request: <PR_NUMBER>
+Files Reviewed: <FILES_COUNT>
+Issues Found: <ISSUE_COUNT>
 
 **Guideline Violated**\
 Guideline Violated: RTS-007 – Avoid Inline Functions in JSX
