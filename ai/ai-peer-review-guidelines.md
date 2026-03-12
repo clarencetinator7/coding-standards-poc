@@ -364,6 +364,11 @@ affect the change.
 
 1. Your response MUST be wrapped between the following markers:
 
+- Start Marker : `---- REVIEW START ----`
+- End Marker : `---- REVIEW END ----`
+
+Example:
+
 ```
 ---- REVIEW START ----
 [review content]
