@@ -383,8 +383,23 @@ Inside the review section:
 
 - Each issue must follow the structure below
 - If multiple issues are found, separate them using this divider: `---`
+- If multiple issues are found, number them sequentially.
+
+Example:
+
+```
+## Issue 1
+...
 
 ---
+
+## Issue 2
+...
+
+---
+```
+
+- Do not add a divider after the final issue.
 
 # Example AI Review Comment
 
